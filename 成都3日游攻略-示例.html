@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>成都 3 日游 · 蜀韵天府</title>
+<style>
+:root {
+  --ink: #1a1f36; --paper: #fafbfc; --cream: #f5f3f0;
+  --accent: #c0392b; --accent2: #635bff;
+  --gold: #b8860b; --muted: #697386; --border: #e3e8ee;
+  --green: #2e7d32; --blue: #1565c0; --card-bg: #ffffff;
+  --shadow: 0 2px 12px rgba(0,0,0,.06);
+  --cat-sight: #6366f1; --cat-food: #f59e0b; --cat-culture: #10b981;
+  --cat-shop: #ec4899; --cat-night: #8b5cf6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-tap-highlight-color:transparent}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(160deg,#7e1214 0%,#b52830 40%,#d4483a 100%);color:#fff;padding:48px 24px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='.03'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/svg%3E")}
+.hero-tag{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:2px;margin-bottom:16px;position:relative}
+.hero h1{font-size:clamp(26px,6vw,46px);font-weight:700;letter-spacing:3px;text-shadow:0 2px 8px rgba(0,0,0,.3);margin-bottom:8px;position:relative}
+.hero-sub{font-size:14px;opacity:.85;letter-spacing:1px;margin-bottom:24px;position:relative}
+.hero-meta{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;position:relative}
+.hero-meta span{background:rgba(255,255,255,.1);border-radius:8px;padding:6px 14px;font-size:13px;border:1px solid rgba(255,255,255,.15)}
+
+/* ── Section ── */
+.section{max-width:900px;margin:0 auto;padding:28px 16px}
+.section-title{font-size:18px;font-weight:700;border-left:4px solid var(--accent);padding-left:12px;margin-bottom:16px}
+
+/* Overview */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.ov-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:var(--shadow)}
+.ov-card .num{font-size:24px;font-weight:700;color:var(--accent)}
+.ov-card .label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Route flow */
+.route-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:600}
+.route-node{background:var(--accent);color:#fff;border-radius:6px;padding:4px 12px;white-space:nowrap}
+.route-arrow{color:var(--accent);font-weight:700}
+
+/* ── Map Section ── */
+.map-section{max-width:900px;margin:0 auto;padding:0 16px 28px}
+.map-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.map-tabs{display:flex;gap:0;background:var(--cream);border-bottom:1px solid var(--border)}
+.map-tab{flex:1;padding:12px 8px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s;outline:none;border-bottom:3px solid transparent;white-space:nowrap}
+.map-tab:hover{color:var(--ink);background:rgba(255,255,255,.5)}
+.map-tab.active{color:var(--accent);background:var(--card-bg);border-bottom-color:var(--accent)}
+.map-body{position:relative}
+.map-container{width:100%;height:440px;position:relative}
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.95);border-radius:8px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;gap:10px;flex-wrap:wrap;z-index:5;font-size:11px;border:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:4px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fallback-map{position:absolute;inset:0;background:linear-gradient(135deg,#f8fafc 0%,#eef6f1 48%,#fff7ed 100%);overflow:hidden}
+.fallback-map:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,184,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.16) 1px,transparent 1px);background-size:40px 40px;opacity:.65}
+.fallback-route{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.fallback-marker{position:absolute;z-index:2;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:2.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:0 8px 18px rgba(15,23,42,.22);cursor:pointer}
+.fallback-marker:hover{transform:translate(-50%,-50%) scale(1.08)}
+.fallback-label{position:absolute;z-index:2;transform:translate(-50%,20px);background:rgba(255,255,255,.94);border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:11px;font-weight:700;white-space:nowrap;color:var(--ink);box-shadow:0 4px 12px rgba(15,23,42,.12)}
+.fallback-note{position:absolute;top:12px;left:12px;right:12px;z-index:3;background:rgba(255,255,255,.94);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--muted);box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.leaflet-map{width:100%;height:100%;z-index:1}
+.leaflet-div-icon.route-marker{background:transparent;border:none}
+.route-marker-dot{width:34px;height:34px;border-radius:50%;border:2.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:0 8px 18px rgba(15,23,42,.22)}
+.leaflet-popup-content{margin:10px 12px}
+
+/* ── Day Timeline ── */
+.day-block{margin-bottom:28px}
+.day-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.day-badge{background:var(--accent);color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.day-title{font-size:17px;font-weight:700}
+.day-subtitle{font-size:12px;color:var(--muted)}
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:12px}
+.tl-dot{position:absolute;left:-17px;top:7px;width:10px;height:10px;border-radius:50%;border:2px solid var(--paper);box-shadow:0 0 0 2px var(--accent)}
+.tl-time{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.tl-content{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.15s}
+.tl-content:hover{box-shadow:var(--shadow);transform:translateX(2px)}
+.tl-content.active-tl{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(99,91,255,.1)}
+.tl-place{font-weight:700;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.tl-place .tl-seq{display:inline-flex;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.seq-sight{background:var(--cat-sight)} .seq-food{background:var(--cat-food)} .seq-culture{background:var(--cat-culture)}
+.seq-shop{background:var(--cat-shop)} .seq-night{background:var(--cat-night)}
+.tl-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.tl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;border-radius:12px;padding:2px 8px}
+.tag-sight{background:#eef2ff;color:var(--cat-sight);border:1px solid #c7d2fe}
+.tag-food{background:#fffbeb;color:var(--cat-food);border:1px solid #fde68a}
+.tag-culture{background:#ecfdf5;color:var(--cat-culture);border:1px solid #a7f3d0}
+.tag-shop{background:#fdf2f8;color:var(--cat-shop);border:1px solid #fbcfe8}
+.tag-night{background:#f5f3ff;color:var(--cat-night);border:1px solid #ddd6fe}
+.tag-cost{background:#f3e5f5;color:#7b1fa2;border:1px solid #ce93d8}
+.tag-nav{background:#e3f2fd;color:var(--blue);border:1px solid #90caf9;cursor:pointer}
+.tag-tip{background:#e8f5e9;color:var(--green);border:1px solid #a5d6a7}
+.day-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sum-item{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px}
+.sum-item strong{color:var(--accent)}
+
+/* ── Budget Table ── */
+.budget-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.budget-table th,.budget-table td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+.budget-table th{background:var(--cream);font-weight:600}
+.budget-table td:last-child,.budget-table th:last-child{text-align:right}
+.budget-table .total{font-weight:700;background:var(--cream)}
+
+/* Hotel grid */
+.hotel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.hotel-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:14px}
+.hotel-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.hotel-stars{color:var(--gold);font-size:12px;margin-bottom:4px}
+.hotel-info{font-size:12px;color:var(--muted);margin-bottom:4px}
+.hotel-price{font-size:16px;font-weight:700;color:var(--accent)}
+
+/* Tips */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tip-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px}
+.tip-card h4{font-size:14px;margin-bottom:6px}
+.tip-card p{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* Footer */
+.footer{text-align:center;padding:28px 16px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:16px}
+
+/* Map info window */
+.iw-box{padding:8px 12px;font-size:13px;max-width:220px;line-height:1.5;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.iw-box strong{font-size:14px;display:block;margin-bottom:2px}
+.iw-box .iw-meta{font-size:11px;color:#697386;margin-bottom:3px}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero{padding:36px 16px 28px}
+  .hero h1{font-size:26px;letter-spacing:2px}
+  .section{padding:20px 12px}
+  .map-container{height:320px}
+  .map-tab{font-size:11px;padding:10px 4px}
+  .overview-grid{grid-template-columns:repeat(3,1fr)}
+  .budget-table{font-size:12px}
+  .budget-table th,.budget-table td{padding:6px 8px}
+}
+@media (max-width: 480px) {
+  .map-container{height:260px}
+  .hero-meta span{font-size:11px;padding:4px 10px}
+  .tl-content{padding:10px 12px}
+  .tl-desc{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-tag">CULTURE · FOOD · NATURE</div>
+  <h1>成都 3 日游</h1>
+  <div class="hero-sub">蜀韵天府 · 一半烟火一半诗</div>
+  <div class="hero-meta">
+    <span>3天 · 18个打卡点</span>
+    <span>预算 ¥1800-2200</span>
+    <span>长沙出发</span>
+    <span>单人自由行</span>
+  </div>
+</div>
+
+<!-- ═══════════════ 行程概览 ═══════════════ -->
+<div class="section">
+  <div class="section-title">行程概览</div>
+  <div class="overview-grid">
+    <div class="ov-card"><div class="num">3</div><div class="label">天</div></div>
+    <div class="ov-card"><div class="num">18</div><div class="label">打卡点</div></div>
+    <div class="ov-card"><div class="num">6</div><div class="label">景点</div></div>
+    <div class="ov-card"><div class="num">5</div><div class="label">美食点</div></div>
+    <div class="ov-card"><div class="num">5</div><div class="label">文化地标</div></div>
+    <div class="ov-card"><div class="num">3</div><div class="label">夜生活</div></div>
+  </div>
+
+  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;box-shadow:var(--shadow)">
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px">🏙 三日路线</div>
+    <div class="route-flow" style="margin-bottom:10px">
+      <span class="route-node">D1</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-sight)">武侯祠</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">锦里</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-food)">奎星楼街</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-sight)">杜甫草堂</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">宽窄巷子</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-night)">九眼桥</span>
+    </div>
+    <div class="route-flow" style="margin-bottom:10px">
+      <span class="route-node">D2</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-sight)">大熊猫基地</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-food)">文殊院素斋</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">人民公园</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">成都博物馆</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-shop)">太古里</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-night)">339塔</span>
+    </div>
+    <div class="route-flow">
+      <span class="route-node">D3</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">东郊记忆</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-food)">建设巷</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-sight)">望江楼</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-food)">玉林路</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-culture)">青羊宫</span><span class="route-arrow">→</span>
+      <span class="route-node" style="background:var(--cat-night)">兰桂坊</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 天气 ═══════════════ -->
+<div class="section">
+  <div class="section-title">天气参考</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px">☀️ 成都市区</div>
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">30°C / 23°C</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">多云为主，午后偶有阵雨。空气湿润，体感偏热。</div>
+    </div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px">🌅 日出 / 日落</div>
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">06:02 / 20:12</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">蓝调时刻 19:47-20:02，适合城市夜景拍摄。</div>
+    </div>
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px">🧥 穿衣建议</div>
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">短袖 + 薄外搭</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">室内外温差大（空调猛），建议带一件薄衬衫或防晒衣。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 🗺 路线地图 ═══════════════ -->
+<div class="map-section">
+  <div class="section-title">🗺 路线地图 <span style="font-size:13px;color:var(--muted);font-weight:400">&nbsp;点击标记查看详情</span></div>
+  <div class="map-card">
+    <div class="map-tabs">
+      <button class="map-tab active" onclick="switchMapDay(0)">DAY 1 · 三国蜀韵</button>
+      <button class="map-tab" onclick="switchMapDay(1)">DAY 2 · 国宝都市</button>
+      <button class="map-tab" onclick="switchMapDay(2)">DAY 3 · 烟火市井</button>
+    </div>
+    <div class="map-body">
+      <div id="map-container" class="map-container">
+        <div class="map-legend" id="map-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:var(--cat-sight)"></span>景点</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--cat-food)"></span>美食</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--cat-culture)"></span>文化</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--cat-shop)"></span>购物</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--cat-night)"></span>夜生活</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 每日行程 ═══════════════ -->
+<div class="section" id="itinerary-section">
+  <div class="section-title">每日行程</div>
+  <div id="itinerary-content"></div>
+</div>
+
+<!-- ═══════════════ 酒店推荐 ═══════════════ -->
+<div class="section">
+  <div class="section-title">住宿推荐</div>
+  <div class="hotel-grid">
+    <div class="hotel-card">
+      <div class="hotel-name">如家neo（成都春熙路太古里店）</div>
+      <div class="hotel-stars">经济型 · 评分 4.5</div>
+      <div class="hotel-info">距春熙路地铁站 300m · 市中心</div>
+      <div class="hotel-price">¥180/晚</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">锦江区总府路，步行到春熙路/太古里5分钟，地铁2/3号线交汇。</div>
+    </div>
+    <div class="hotel-card">
+      <div class="hotel-name">全季酒店（成都宽窄巷子中心店）</div>
+      <div class="hotel-stars">舒适型 · 评分 4.7</div>
+      <div class="hotel-info">距宽窄巷子 500m · 青羊区</div>
+      <div class="hotel-price">¥260/晚</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">地铁4号线宽窄巷子站旁，去武侯祠/锦里/杜甫草堂均方便。</div>
+    </div>
+    <div class="hotel-card">
+      <div class="hotel-name">青旅·成都梦之旅国际青年旅舍</div>
+      <div class="hotel-stars">青旅 · 评分 4.3</div>
+      <div class="hotel-info">武侯祠对面 · 锦里隔壁</div>
+      <div class="hotel-price">¥60/床位</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">位置绝佳，武侯祠大街242号。背包客首选，楼顶可看锦里夜景。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 预算 ═══════════════ -->
+<div class="section">
+  <div class="section-title">费用预估</div>
+  <table class="budget-table">
+    <tr><th>项目</th><th>明细</th><th>金额</th></tr>
+    <tr><td>大交通（往返）</td><td>长沙南 ⇄ 成都东 高铁二等座</td><td>¥1040</td></tr>
+    <tr><td>住宿 2 晚</td><td>如家neo ¥180 × 2</td><td>¥360</td></tr>
+    <tr><td>门票</td><td>武侯祠50 + 杜甫草堂50 + 大熊猫基地55 + 青羊宫10 + 望江楼20 + 339观光80</td><td>¥265</td></tr>
+    <tr><td>餐饮 3 天</td><td>¥120/天 × 3（含小吃+正餐+夜宵）</td><td>¥360</td></tr>
+    <tr><td>市内交通</td><td>地铁 ¥6×6次 + 打车 ¥15×4次</td><td>¥96</td></tr>
+    <tr><td>其他</td><td>茶馆、文创、伴手礼</td><td>¥150</td></tr>
+    <tr class="total"><td><strong>合计</strong></td><td>中低档预算，3天2晚</td><td><strong>≈¥2,271</strong></td></tr>
+  </table>
+  <div style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8">
+    <strong>省钱建议：</strong>① 住青旅省¥240 ② 杜甫草堂/武侯祠早鸟票减¥20 ③ 339塔白天免费上 ④ 优化后预算 <strong>¥1800-2000</strong>
+  </div>
+</div>
+
+<!-- ═══════════════ 实用贴士 ═══════════════ -->
+<div class="section">
+  <div class="section-title">实用贴士</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <h4>🐼 大熊猫基地必读</h4>
+      <p>7:30开门，建议7点前到门口排队。先冲月亮产房看幼崽（8-9点最活跃），再往回逛。门票提前在公众号预约。交通：地铁3号线熊猫大道站转景区直通车。</p>
+    </div>
+    <div class="tip-card">
+      <h4>📸 摄影师机位</h4>
+      <p>武侯祠红墙（上午顺光）、宽窄巷子傍晚蓝调、太古里IFS爬墙熊猫（广角仰拍）、九眼桥安顺廊桥夜景（长焦压缩+三脚架）、望江楼竹影（逆光）。</p>
+    </div>
+    <div class="tip-card">
+      <h4>🍜 夏天吃辣攻略</h4>
+      <p>配冰粉解辣！禅泉冰粉（奎星楼街）、萬得冰田（建设巷）是本地人最爱。火锅选微辣即可（成都微辣=外地中辣）。</p>
+    </div>
+    <div class="tip-card">
+      <h4>🚇 交通避坑</h4>
+      <p>成都地铁覆盖主要景区（1/2/3/4号线）。春熙路打车高峰期排队30分钟以上，建议提前叫车或走2个路口再叫。景区门口的黑车一律不坐。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="footer">
+  数据来源：腾讯地图 POI 搜索 · 途牛 CLI · wttr.in 天气<br>
+  生成时间：2026-06-29 · WorkBuddy 旅行攻略 V2 + 腾讯地图 JSAPI GL<br>
+  点击地图标记或下方时间轴卡片查看地点详情
+</div>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+// ── POI Data ──
+const dayData = [
+  {
+    theme: "三国蜀韵 · 千年文脉线",
+    subtitle: "武侯祠 → 锦里 → 奎星楼街 → 杜甫草堂 → 宽窄巷子 → 九眼桥",
+    budget: "门票 ¥100 + 餐饮 ¥120 + 交通 ¥15 = 约 ¥235",
+    pois: [
+      { time:"08:00", name:"武侯祠", cat:"sight", catCN:"景点",
+        desc:"三国圣地，君臣合祀祠庙。红墙竹影是出片圣地，建议早到避开人流。门票 ¥50",
+        lat:30.646202, lng:104.048001, tip:"红墙竹影上午顺光，70-200mm压缩效果佳" },
+      { time:"09:30", name:"锦里古街", cat:"culture", catCN:"文化",
+        desc:"西蜀第一街，青石板路配明清建筑。三大炮、糖油果子、蛋烘糕边逛边吃。免费开放式街区",
+        lat:30.645986, lng:104.049802, tip:"" },
+      { time:"12:00", name:"奎星楼街·川菜午餐", cat:"food", catCN:"美食",
+        desc:"本地人私藏美食街。冒椒火辣串串、二嬢鸡爪爪、禅泉冰粉。人均 ¥50",
+        lat:30.668281, lng:104.053998, tip:"" },
+      { time:"14:00", name:"杜甫草堂", cat:"sight", catCN:"景点",
+        desc:"诗圣故居，茅屋竹林意境满分。「安得广厦千万间」出处。门票 ¥50",
+        lat:30.660136, lng:104.028527, tip:"竹林逆光拍摄效果佳" },
+      { time:"16:30", name:"宽窄巷子", cat:"culture", catCN:"文化",
+        desc:"三条清代古街。茶馆听戏、掏耳朵、文创小店。免费，傍晚蓝调时刻拍摄最佳。",
+        lat:30.663831, lng:104.05364, tip:"19:40蓝调时刻拍灯笼+古建筑" },
+      { time:"20:00", name:"九眼桥·酒吧街", cat:"night", catCN:"夜生活",
+        desc:"安顺廊桥夜景绝美，沿河酒吧一条街。贰麻酒馆、莲花府邸。人均 ¥80",
+        lat:30.639615, lng:104.088438, tip:"桥上长焦压缩拍廊桥灯光倒影" }
+    ]
+  },
+  {
+    theme: "国宝都市 · 禅意与现代的交响",
+    subtitle: "大熊猫基地 → 文殊院素斋 → 人民公园 → 成都博物馆 → 太古里 → 339塔",
+    budget: "门票 ¥55 + 餐饮 ¥140 + 交通 ¥20 = 约 ¥215",
+    pois: [
+      { time:"07:30", name:"大熊猫繁育研究基地", cat:"sight", catCN:"景点",
+        desc:"必早到！8点开园，9点后熊猫回室内。先冲月亮产房看幼崽。门票 ¥55",
+        lat:30.736643, lng:104.143773, tip:"带长焦拍幼崽，早起人少光线柔和" },
+      { time:"11:30", name:"文殊院·素斋午餐", cat:"food", catCN:"美食",
+        desc:"千年古刹，免费赠香。香园素斋必试：宫保素丁 ¥28、罗汉面 ¥15。人均 ¥35",
+        lat:30.675341, lng:104.07254, tip:"" },
+      { time:"14:30", name:"人民公园·鹤鸣茶社", cat:"culture", catCN:"文化",
+        desc:"百年茶社，竹椅盖碗茶 ¥15-30。体验老成都慢生活：喝茶嗑瓜子掏耳朵。",
+        lat:30.657133, lng:104.057591, tip:"拍茶社人文片，24-120mm挂机" },
+      { time:"17:00", name:"成都博物馆", cat:"culture", catCN:"文化",
+        desc:"天府之国通史展，了解成都四千年。提前公众号预约，免费入场。",
+        lat:30.657331, lng:104.06376, tip:"" },
+      { time:"18:30", name:"春熙路·太古里·IFS", cat:"shop", catCN:"购物",
+        desc:"IFS爬墙大熊猫打卡+太古里街区+春熙路夜市。方所书店必逛。晚餐推荐马旺子川菜。",
+        lat:30.654846, lng:104.081412, tip:"IFS大熊猫广角仰拍经典机位" },
+      { time:"21:00", name:"339电视塔·天府熊猫塔", cat:"night", catCN:"夜生活",
+        desc:"西部第一高塔，208米俯瞰成都夜景。旋转餐厅、高空酒吧。观光 ¥80",
+        lat:30.662273, lng:104.090963, tip:"带三脚架拍城市夜景长曝光" }
+    ]
+  },
+  {
+    theme: "烟火市井 · 文艺与美食的碰撞",
+    subtitle: "东郊记忆 → 建设巷 → 望江楼 → 玉林路 → 青羊宫 → 兰桂坊",
+    budget: "门票 ¥20 + 餐饮 ¥150 + 交通 ¥20 = 约 ¥190",
+    pois: [
+      { time:"09:30", name:"东郊记忆", cat:"culture", catCN:"文化",
+        desc:"国营红光电子管厂改造文创园区。火车头广场、涂鸦墙，工业风拍照圣地。免费",
+        lat:30.668742, lng:104.122911, tip:"工业风 + 广角，早上人少光影好" },
+      { time:"12:00", name:"建设巷·小吃天堂", cat:"food", catCN:"美食",
+        desc:"成都小吃宇宙中心！周签签锅巴土豆 ¥10、傅强排骨 ¥15、萬得冰田。人均 ¥50",
+        lat:30.671457, lng:104.102687, tip:"" },
+      { time:"14:00", name:"望江楼公园", cat:"sight", catCN:"景点",
+        desc:"全国最大竹类公园，150+品种。登楼看锦江，薛涛井怀古。门票 ¥20",
+        lat:30.62948, lng:104.09248, tip:"竹林里逆光拍光斑，70-200mm最佳" },
+      { time:"16:00", name:"玉林路·小酒馆", cat:"food", catCN:"美食",
+        desc:"赵雷《成都》灵感地。王妈手撕烤兔、玉林串串香。人均 ¥60",
+        lat:30.629507, lng:104.056434, tip:"" },
+      { time:"18:00", name:"青羊宫", cat:"culture", catCN:"文化",
+        desc:"川西第一道观，道教全真派圣地。混元殿、八卦亭。门票 ¥10，求签 ¥10",
+        lat:30.661323, lng:104.042469, tip:"八卦亭对称构图，17:30前进入" },
+      { time:"20:00", name:"兰桂坊成都", cat:"night", catCN:"夜生活",
+        desc:"合江亭旁时尚夜生活地标。Jing Bar 井酒吧、贰麻酒馆旗舰店。人均 ¥100",
+        lat:30.644954, lng:104.085029, tip:"" }
+    ]
+  }
+];
+
+const catColors = { sight:'#6366f1', food:'#f59e0b', culture:'#10b981', shop:'#ec4899', night:'#8b5cf6' };
+const catNames = { sight:'景点', food:'美食', culture:'文化', shop:'购物', night:'夜生活' };
+
+// ── Map ──
+let map, markerLayer, polylineLayer, polylineLayer2, infoWindow, currentMapDay = 0, usingFallbackMap = false;
+let leafletMap, leafletMarkers = [], leafletLoadStarted = false, leafletLoaded = false, leafletCallbacks = [];
+
+function makeMarkerSvg(num, color) {
+  return 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">' +
+    '<circle cx="17" cy="17" r="15" fill="' + color + '" stroke="#fff" stroke-width="2.5"/>' +
+    '<text x="17" y="22" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial,sans-serif">' + num + '</text></svg>'
+  );
+}
+
+function initMap() {
+  map = new TMap.Map('map-container', {
+    center: new TMap.LatLng(30.659, 104.07), zoom: 12, mapStyleId: "style8",
+    baseMap: { type: 'vector', features: ['base','building3d','point','label'] }
+  });
+  map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.ROTATION);
+  map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.OVERVIEW);
+  infoWindow = new TMap.InfoWindow({
+    map: map,
+    position: new TMap.LatLng(30.659, 104.07),
+    offset: {x:0, y:-12}
+  });
+  infoWindow.close();
+  renderItinerary(0);
+  try {
+    updateMap(0);
+  } catch (error) {
+    console.error('腾讯地图路线渲染失败，已切换为静态路线图', error);
+    renderFallbackMap(0);
+  }
+}
+
+function updateMap(dayIdx) {
+  if (location.protocol === 'file:' || !map || typeof TMap === 'undefined') {
+    renderFallbackMap(dayIdx);
+    return;
+  }
+  usingFallbackMap = false;
+  currentMapDay = dayIdx;
+  if (markerLayer) { markerLayer.setMap(null); markerLayer = null; }
+  if (polylineLayer) { polylineLayer.setMap(null); polylineLayer = null; }
+  if (polylineLayer2) { polylineLayer2.setMap(null); polylineLayer2 = null; }
+
+  document.querySelectorAll('.map-tab').forEach((b,i) => b.classList.toggle('active', i===dayIdx));
+  const pois = dayData[dayIdx].pois;
+
+  // 每个 POI 独立 marker style
+  const styles = {};
+  const geos = pois.map((p,i) => {
+    const sid = 's' + i;
+    styles[sid] = new TMap.MarkerStyle({ width:34, height:34, anchor:{x:17,y:17},
+      src: makeMarkerSvg(i+1, catColors[p.cat]) });
+    return { id: 'm'+i, styleId: sid,
+      position: new TMap.LatLng(p.lat, p.lng),
+      properties: { title: p.name, idx: i, cat: p.cat } };
+  });
+
+  markerLayer = new TMap.MultiMarker({ map: map, styles: styles, geometries: geos });
+  markerLayer.on('click', function(e) {
+    const idx = e.geometry.properties.idx;
+    showInfoWindow(dayIdx, idx);
+  });
+
+  // 双层 polyline：描边 + 填充
+  const paths = pois.map(p => new TMap.LatLng(p.lat, p.lng));
+  // 下层：深色描边（更宽）
+  polylineLayer2 = new TMap.MultiPolyline({
+    map: map,
+    styles: { 'stroke': new TMap.PolylineStyle({
+      color: 'rgba(30,58,138,0.65)', width: 8, borderWidth: 0, lineCap: 'round', lineJoin: 'round'
+    })},
+    geometries: [{ id: 's', styleId: 'stroke', paths: paths }]
+  });
+  // 上层：浅蓝主体
+  polylineLayer = new TMap.MultiPolyline({
+    map: map,
+    styles: { 'fill': new TMap.PolylineStyle({
+      color: 'rgba(59,130,246,0.85)', width: 4, borderWidth: 0, lineCap: 'round', lineJoin: 'round'
+    })},
+    geometries: [{ id: 'f', styleId: 'fill', paths: paths }]
+  });
+
+  const bounds = new TMap.LatLngBounds();
+  pois.forEach(p => bounds.extend(new TMap.LatLng(p.lat, p.lng)));
+  map.fitBounds(bounds, { padding: 35 });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, function(ch) {
+    return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+  });
+}
+
+function mapLegendHtml() {
+  return '<div class="map-legend" id="map-legend">'
+    + '<div class="legend-item"><span class="legend-dot" style="background:var(--cat-sight)"></span>景点</div>'
+    + '<div class="legend-item"><span class="legend-dot" style="background:var(--cat-food)"></span>美食</div>'
+    + '<div class="legend-item"><span class="legend-dot" style="background:var(--cat-culture)"></span>文化</div>'
+    + '<div class="legend-item"><span class="legend-dot" style="background:var(--cat-shop)"></span>购物</div>'
+    + '<div class="legend-item"><span class="legend-dot" style="background:var(--cat-night)"></span>夜生活</div>'
+    + '</div>';
+}
+
+function renderFallbackMap(dayIdx) {
+  usingFallbackMap = true;
+  currentMapDay = dayIdx;
+  document.querySelectorAll('.map-tab').forEach((b,i) => b.classList.toggle('active', i===dayIdx));
+
+  loadLeafletAssets(function() {
+    renderLeafletMap(dayIdx);
+  }, function() {
+    renderStaticFallbackMap(dayIdx);
+  });
+}
+
+function loadLeafletAssets(onReady, onError) {
+  if (window.L) {
+    leafletLoaded = true;
+    onReady();
+    return;
+  }
+  leafletCallbacks.push({ ready: onReady, error: onError });
+  if (leafletLoadStarted) return;
+  leafletLoadStarted = true;
+
+  const css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(css);
+
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  script.onload = function() {
+    leafletLoaded = true;
+    const callbacks = leafletCallbacks.slice();
+    leafletCallbacks = [];
+    callbacks.forEach(cb => cb.ready());
+  };
+  script.onerror = function() {
+    const callbacks = leafletCallbacks.slice();
+    leafletCallbacks = [];
+    callbacks.forEach(cb => cb.error());
+  };
+  document.body.appendChild(script);
+}
+
+function renderLeafletMap(dayIdx) {
+  usingFallbackMap = true;
+  currentMapDay = dayIdx;
+  document.querySelectorAll('.map-tab').forEach((b,i) => b.classList.toggle('active', i===dayIdx));
+
+  const pois = dayData[dayIdx].pois;
+  if (leafletMap) {
+    leafletMap.remove();
+    leafletMap = null;
+  }
+  leafletMarkers = [];
+  document.getElementById('map-container').innerHTML = '<div id="leaflet-map" class="leaflet-map"></div>' + mapLegendHtml();
+
+  leafletMap = L.map('leaflet-map', { zoomControl: true, attributionControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(leafletMap);
+
+  const latLngs = pois.map(p => [p.lat, p.lng]);
+  L.polyline(latLngs, {
+    color: 'rgba(30,58,138,.65)',
+    weight: 8,
+    opacity: .7,
+    lineCap: 'round',
+    lineJoin: 'round'
+  }).addTo(leafletMap);
+  L.polyline(latLngs, {
+    color: 'rgba(59,130,246,.9)',
+    weight: 4,
+    opacity: .95,
+    lineCap: 'round',
+    lineJoin: 'round'
+  }).addTo(leafletMap);
+
+  pois.forEach((p, i) => {
+    const icon = L.divIcon({
+      className: 'leaflet-div-icon route-marker',
+      html: '<div class="route-marker-dot" style="background:' + catColors[p.cat] + '">' + (i + 1) + '</div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -16]
+    });
+    const popup = '<div class="iw-box"><strong>' + (i + 1) + '. ' + escapeHtml(p.name) + '</strong>'
+      + '<div class="iw-meta">' + escapeHtml(p.time) + ' · ' + escapeHtml(catNames[p.cat]) + '</div>'
+      + '<div style="font-size:12px;color:#1a1f36">' + escapeHtml(p.desc) + '</div>'
+      + (p.tip ? '<div style="font-size:11px;color:#7b1fa2;margin-top:4px">📷 ' + escapeHtml(p.tip) + '</div>' : '')
+      + '</div>';
+    const marker = L.marker([p.lat, p.lng], { icon: icon })
+      .addTo(leafletMap)
+      .bindPopup(popup)
+      .on('click', function() {
+        highlightTimeline(dayIdx, i);
+      });
+    leafletMarkers.push(marker);
+  });
+
+  leafletMap.fitBounds(latLngs, { padding: [35, 35] });
+}
+
+function renderStaticFallbackMap(dayIdx) {
+  usingFallbackMap = true;
+  currentMapDay = dayIdx;
+  document.querySelectorAll('.map-tab').forEach((b,i) => b.classList.toggle('active', i===dayIdx));
+
+  const pois = dayData[dayIdx].pois;
+  const lats = pois.map(p => p.lat);
+  const lngs = pois.map(p => p.lng);
+  const minLat = Math.min.apply(null, lats);
+  const maxLat = Math.max.apply(null, lats);
+  const minLng = Math.min.apply(null, lngs);
+  const maxLng = Math.max.apply(null, lngs);
+  const latRange = maxLat - minLat || 0.01;
+  const lngRange = maxLng - minLng || 0.01;
+
+  const points = pois.map((p, i) => {
+    const x = 12 + ((p.lng - minLng) / lngRange) * 76;
+    const y = 84 - ((p.lat - minLat) / latRange) * 64;
+    return { x, y, poi: p, index: i };
+  });
+  const routePoints = points.map(p => p.x.toFixed(2) + ',' + p.y.toFixed(2)).join(' ');
+  const markers = points.map(p => {
+    const color = catColors[p.poi.cat];
+    return '<button class="fallback-marker" style="left:' + p.x.toFixed(2) + '%;top:' + p.y.toFixed(2)
+      + '%;background:' + color + '" onclick="focusPoi(' + dayIdx + ',' + p.index + ')" title="'
+      + escapeHtml(p.poi.name) + '">' + (p.index + 1) + '</button>'
+      + '<div class="fallback-label" style="left:' + p.x.toFixed(2) + '%;top:' + p.y.toFixed(2)
+      + '%">' + escapeHtml(p.poi.name) + '</div>';
+  }).join('');
+
+  document.getElementById('map-container').innerHTML =
+    '<div class="fallback-map">'
+    + '<div class="fallback-note">真实底图资源加载失败，已显示可交互静态路线图。</div>'
+    + '<svg class="fallback-route" viewBox="0 0 100 100" preserveAspectRatio="none">'
+    + '<polyline points="' + routePoints + '" fill="none" stroke="rgba(30,58,138,.65)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<polyline points="' + routePoints + '" fill="none" stroke="rgba(59,130,246,.9)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '</svg>' + markers + '</div>' + mapLegendHtml();
+}
+
+function showInfoWindow(dayIdx, poiIdx) {
+  const p = dayData[dayIdx].pois[poiIdx];
+  const content = '<div class="iw-box"><strong>' + (poiIdx+1) + '. ' + p.name + '</strong>'
+    + '<div class="iw-meta">⏰ ' + p.time + ' · ' + catNames[p.cat] + '</div>'
+    + '<div style="font-size:12px;color:#1a1f36">' + p.desc + '</div>'
+    + (p.tip ? '<div style="font-size:11px;color:#7b1fa2;margin-top:4px">📷 ' + p.tip + '</div>' : '')
+    + '</div>';
+  infoWindow.setPosition(new TMap.LatLng(p.lat, p.lng));
+  infoWindow.setContent(content);
+  infoWindow.open();
+}
+
+function highlightTimeline(dayIdx, poiIdx) {
+  document.querySelectorAll('.tl-content').forEach(c => c.classList.remove('active-tl'));
+  var card = document.getElementById('tl-' + dayIdx + '-' + poiIdx);
+  if (card) { card.classList.add('active-tl'); card.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+
+function switchMapDay(dayIdx) {
+  renderItinerary(dayIdx);
+  try {
+    updateMap(dayIdx);
+  } catch (error) {
+    console.error('腾讯地图路线渲染失败，已切换为静态路线图', error);
+    renderFallbackMap(dayIdx);
+  }
+  document.getElementById('itinerary-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── 路线详情渲染 ──
+function renderItinerary(dayIdx) {
+  const d = dayData[dayIdx];
+  let html = '<div class="day-block">'
+    + '<div class="day-header"><div class="day-badge">D' + (dayIdx+1) + '</div>'
+    + '<div><div class="day-title">' + d.theme + '</div>'
+    + '<div class="day-subtitle">' + d.subtitle + '</div></div></div>'
+    + '<div class="timeline">';
+
+  d.pois.forEach((p,i) => {
+    html += '<div class="tl-item">'
+      + '<div class="tl-dot"></div>'
+      + '<div class="tl-time">' + p.time + '</div>'
+      + '<div class="tl-content" onclick="focusPoi(' + dayIdx + ',' + i + ')" id="tl-' + dayIdx + '-' + i + '">'
+      + '<div class="tl-place"><span class="tl-seq seq-' + p.cat + '">' + (i+1) + '</span>' + p.name + '</div>'
+      + '<div class="tl-desc">' + p.desc + '</div>'
+      + '<div class="tl-tags">'
+      + '<span class="tag tag-' + p.cat + '">' + p.catCN + '</span>';
+    if (p.tip) html += '<span class="tag tag-tip">📷 ' + p.tip + '</span>';
+    html += '</div></div></div>';
+  });
+
+  html += '</div>'
+    + '<div class="day-summary">'
+    + '<div class="sum-item">📊 <strong>' + d.budget + '</strong></div></div></div>';
+
+  document.getElementById('itinerary-content').innerHTML = html;
+}
+
+function focusPoi(dayIdx, poiIdx) {
+  // 切到对应地图 tab
+  if (currentMapDay !== dayIdx) {
+    renderItinerary(dayIdx);
+    try {
+      updateMap(dayIdx);
+    } catch (error) {
+      console.error('腾讯地图路线渲染失败，已切换为静态路线图', error);
+      renderFallbackMap(dayIdx);
+    }
+  }
+  setTimeout(function() {
+    const p = dayData[dayIdx].pois[poiIdx];
+    if (!usingFallbackMap && map && typeof TMap !== 'undefined') {
+      map.easeTo({ center: new TMap.LatLng(p.lat, p.lng), zoom: 16 }, { duration: 600 });
+      showInfoWindow(dayIdx, poiIdx);
+    } else if (leafletMap && leafletMarkers[poiIdx]) {
+      leafletMap.setView([p.lat, p.lng], 16, { animate: true });
+      leafletMarkers[poiIdx].openPopup();
+    }
+    highlightTimeline(dayIdx, poiIdx);
+  }, 150);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderItinerary(0);
+  if (location.protocol === 'file:') {
+    renderFallbackMap(0);
+    return;
+  }
+  loadTencentMapScript();
+  setTimeout(function() {
+    if (!map) renderFallbackMap(0);
+  }, 3000);
+});
+
+function loadTencentMapScript() {
+  const script = document.createElement('script');
+  script.src = 'https://map.qq.com/api/gljs?v=1&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&callback=initMap';
+  script.onerror = function() {
+    renderFallbackMap(currentMapDay);
+  };
+  document.body.appendChild(script);
+}
+
+// ── API ready 后由腾讯地图 callback 自动调用 initMap ──
+</script>
+
+</body>
+</html>
